@@ -41,7 +41,7 @@ const JobItem = ({ job }: { job: IJob }) => {
               <img src={randomIntFromInterval()} alt="" />
             </div>
             <div className="content">
-              <h3>job.title</h3>
+              <h3>{job.title}</h3>
               <p className="brand">{job.company}</p>
               <div className="tags">
                 <span>
