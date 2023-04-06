@@ -67,8 +67,15 @@ const JobDetailsPage = (props: Props) => {
         buttons: true,
         dangerMode: false,
       }).then((apply: boolean) => {
+        let payload = {
+          name: {
+            first: user?.name?.first,
+            last: user?.name?.last,
+          },
+          phone: user?.phone,
+        };
         if (apply) {
-          AxiosConfig.post(`/jobs/apply/${jobId}`, { user }, config)
+          AxiosConfig.post(`/jobs/apply/${jobId}`, payload, config)
             .then((res) => {
               setIsApplied(true);
               swal("Successfully applied for this position", {
