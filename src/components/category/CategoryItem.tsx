@@ -16,7 +16,7 @@ const CategoryItem: FC<Props> = ({category, index}) => {
                     <i className={category.icon}/>
                 </div>
                 <h3>{category.name}</h3>
-                <p>({category.total_jobs} jobs)</p>
+                {/* <p>({category.total_jobs} jobs)</p> */}
             </a>
         </div>
     );

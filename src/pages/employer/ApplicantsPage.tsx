@@ -7,7 +7,7 @@ import BaseLayout from "../../components/BaseLayout";
 import { Link } from "react-router-dom";
 import moment from 'moment';
 import { IApplicant, IUser } from "../../interfaces";
-import Loader from "react-loader-spinner";
+import {Rings} from "react-loader-spinner";
 
 const ApplicantsPage: FC = () => {
     const [applicants, setApplicants] = useState<IApplicant[]>([]);
@@ -48,8 +48,8 @@ const ApplicantsPage: FC = () => {
                         <div className="col-lg-9 col-md-9 col-xs-12">
                             <div className="row">
                                 <div className="col-md-6 mx-auto">
-                                    <Loader
-                                        type="Grid"
+                                    <Rings
+                                        // type="Grid"
                                         color="#00BFFF"
                                         // style={{textAlign: 'center'}}
                                         height={100}

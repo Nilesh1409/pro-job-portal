@@ -4,20 +4,24 @@ import { AuthContext } from "../../contexts/AuthContext";
 import AxiosConfig from "../../AxiosConfig";
 import EmployerSidebarLayout from "../../components/employer-dashboard/EmployerSidebarLayout";
 import BaseLayout from "../../components/BaseLayout";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { Link,
+    //  RouteComponentProps
+     } from "react-router-dom";
 import moment from "moment";
 import AcceptRejectModal from "../../components/modals/AcceptRejectModal";
 import { IApplicant, IUser } from "../../interfaces";
-import Loader from "react-loader-spinner";
+import {Rings} from "react-loader-spinner";
 
-interface MatchParams {
-    job_id: string;
-}
+// interface MatchParams {
+//     job_id: string;
+// }
 
-interface MatchProps extends RouteComponentProps<MatchParams> {
-}
+// interface MatchProps extends RouteComponentProps<MatchParams> {
+// }
+// const ApplicantsPerJobPage: FC<MatchProps> = () => {
+    // earlier it was like above code
 
-const ApplicantsPerJobPage: FC<MatchProps> = ({match}) => {
+const ApplicantsPerJobPage: FC = () => {
     const [applicants, setApplicants] = useState<IApplicant[]>([]);
     const [loading, setLoading] = useState(true);
     const authContext = useContext(AuthContext);
@@ -26,12 +30,16 @@ const ApplicantsPerJobPage: FC<MatchProps> = ({match}) => {
     const [type, setType] = useState('');
     const [applicant, setApplicant] = useState<IApplicant>(Object);
 
+    // added job_id variable to avoid error for now
+
+    let job_id = 'jhsdjfjkj3'
+
     useEffect(() => {
         const config = {
             headers: {Authorization: `Bearer ${token}`}
         };
 
-        let job_id = match.params.job_id;
+        // let job_id = match.params.job_id;
 
         const fetchApplicants = async () => {
             try {
@@ -63,8 +71,8 @@ const ApplicantsPerJobPage: FC<MatchProps> = ({match}) => {
                         <div className="col-lg-9 col-md-9 col-xs-12">
                             <div className="row">
                                 <div className="col-md-6 mx-auto">
-                                    <Loader
-                                        type="Grid"
+                                    <Rings
+                                        // type="Grid"
                                         color="#00BFFF"
                                         // style={{textAlign: 'center'}}
                                         height={100}

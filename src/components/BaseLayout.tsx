@@ -14,7 +14,7 @@ const BaseLayout: FC<Props> = ({children, title}) => {
         <React.Fragment>
             <Header/>
             <Helmet>
-                <title>{title}</title>
+                <title>{title}</title>X
             </Helmet>
 
             {children}

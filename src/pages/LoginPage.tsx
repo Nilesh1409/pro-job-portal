@@ -1,10 +1,12 @@
 /* eslint-disable */
-import React, { useState, useContext, useRef, useEffect, FC } from "react";
+import React, { useState,
+     useContext,
+      useRef, useEffect, FC } from "react";
 import Header from "../components/Header";
 import { Helmet } from "react-helmet";
 import AxiosConfig from "../AxiosConfig";
 import { AuthContext } from "../contexts/AuthContext";
-import { Redirect, NavLink, RouteComponentProps } from "react-router-dom";
+import { Navigate, NavLink, RouteProps } from "react-router-dom";
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 import GoogleSocialAuth from "../components/social/GoogleSocialAuth";
@@ -15,14 +17,16 @@ const {useToasts} = require('react-toast-notifications');
 interface IJwtPayload extends JwtPayload {
     user: any
 }
-
-const LoginPage: FC<RouteComponentProps> = ({history, location}) => {
+// let navigate = useNavigate()
+const LoginPage: FC = () => {
 
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
-    const [redirect, setRedirect] = useState(false);
+    const [isNavigate, setIsNavigate] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const authContext = useContext(AuthContext);
+    console.log('authcontext',authContext, AuthContext)
     const {addToast} = useToasts();
     const _isMounted = useRef(true);
 
@@ -36,41 +40,45 @@ const LoginPage: FC<RouteComponentProps> = ({history, location}) => {
         evt.preventDefault();
         setSubmitted(true);
 
-        if (!email && !password) {
+        if (!phone && !password) {
             setSubmitted(false);
             alert('All fields are required');
             return true;
         }
-
+        let phoneInNumber = +phone
         const postData = {
-            "email": email,
+            "phone": phoneInNumber,
             "password": password
         }
 
         const loginUser = async () => {
             try {
-                const res = await AxiosConfig.post('login/', postData);
-                let decoded = jwtDecode<IJwtPayload>(res.data.access);
+                const res = await AxiosConfig.post('auth/login', postData);
+                console.log('res on login', res)
+                let decoded = jwtDecode<IJwtPayload>(res.data.token);
+                console.log('decoded', decoded)
                 authContext.authDispatch({
                     type: authContext.ActionTypes.LOGIN,
                     payload: {
                         user: decoded.user || {},
-                        token: res.data.access,
+                        token: res.data.token,
                         refreshToken: res.data.refresh,
                     },
                 });
                 addToast('Logged in successfully', {appearance: 'success', autoDismiss: true,});
                 setSubmitted(false);
                 if (_isMounted.current) {
-                    history.push('/');
+                    // navigate('/');
+                    <Navigate to='/' />
                 } else {
                     _isMounted.current = false
                 }
             } catch (err) {
-                if (err.response && err.response.status === 401) {
-                    console.log(err.response);
-                    addToast('Login failed', {appearance: 'error', autoDismiss: true,});
-                }
+                // if (err.response && err.response.status === 401) {
+                //     console.log(err.response);
+                //     addToast('Login failed', {appearance: 'error', autoDismiss: true,});
+                // }
+                console.log('err',err)
                 setSubmitted(false);
             }
         }
@@ -78,8 +86,8 @@ const LoginPage: FC<RouteComponentProps> = ({history, location}) => {
         loginUser().then();
     }
 
-    if (redirect || authContext.state.isAuthenticated) {
-        return <Redirect to="/"/>;
+    if (isNavigate || authContext.state.isAuthenticated) {
+        return <Navigate to="/"/>;
     }
     return (
         <React.Fragment>
@@ -109,13 +117,13 @@ const LoginPage: FC<RouteComponentProps> = ({history, location}) => {
                                     <div className="form-group">
                                         <div className="input-icon">
                                             <i className="lni-user"/>
-                                            <input type="email"
+                                            <input type="number"
                                                    id="sender-email"
                                                    className="form-control"
-                                                   name="email"
-                                                   placeholder="Email"
-                                                   value={email}
-                                                   onChange={e => setEmail(e.target.value)}
+                                                   name="number"
+                                                   placeholder="Phone number"
+                                                   value={phone}
+                                                   onChange={e => setPhone(e.target.value)}
                                             />
                                         </div>
                                     </div>

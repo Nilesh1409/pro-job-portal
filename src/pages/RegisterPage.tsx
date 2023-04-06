@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { Helmet } from "react-helmet";
 import AxiosConfig from "../AxiosConfig";
 import { AuthContext } from "../contexts/AuthContext";
-import { NavLink, Redirect } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
 import swal from 'sweetalert';
 
 const {useToasts} = require("react-toast-notifications");
@@ -12,54 +12,113 @@ const {useToasts} = require("react-toast-notifications");
 
 const RegisterPage = () => {
 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [phoneError, setPhoneError] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const [gender, setGender] = useState('');
     const [role, setRole] = useState('');
-    const [redirect, setRedirect] = useState(false);
+    const [isNavigate, setIsNavigate] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const authContext = useContext(AuthContext);
     const {addToast} = useToasts();
+    const [toastOpen, setToastOpen] = useState(false)
+    const [toastMessage, setToastMessage] = useState('')
+    
+
+
+    const vertical = 'top';
+    const horizontal = 'center';
+
+    const handlePhone = (value: string) =>{
+
+        setPhoneError('')
+        setPhone(value)
+    }
+
+    const handleToastClose = () =>{
+        setToastOpen(false)
+    }
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (evt) => {
         evt.preventDefault();
-        setSubmitted(true);
-
-        if (!email && !password) {
-            alert('All fields are required');
+        
+        if(!phone.match(/^(?:\+91|0)?[6789]\d{9}$/)) {
+            setPhoneError('Please enter valid phone number')
+            return
+        }
+        if (!phone || !password || !firstName || !lastName || !firstName || !gender || !role)  {
+            addToast('All fields are required', {appearance: 'error'});
             setSubmitted(false);
             return true;
         }
 
+        if(!password.match(/^(?=.*[a-zA-Z])(?=.*\d).{6,}$/)){
+            setPasswordError('Password should contain 1 character 1 number and total length should be at least 6')
+            return
+        }
+        if(password !== password2){
+            setPasswordError('Password is not matching')
+            return
+        }
+        
+        let phoneInNumber = +phone
+        
         const postData = {
-            "email": email,
+            "phone": phoneInNumber,
             "password": password,
             "password2": password2,
             "gender": gender,
-            "role": role
+            "role": role,
+            "name":{
+                first: firstName,
+                last: lastName
+            }
         }
-
-        AxiosConfig.post('register/', postData)
+        
+        setSubmitted(true);
+        AxiosConfig.post('auth/signup', postData)
             .then(res => {
-                // swal("Good job!", "Successfully registered!", "success");
+                console.log('resgister res', res)
+                swal("Good job!", "Successfully registered!", "success");
                 setSubmitted(false);
                 addToast('Registered successfully', {appearance: 'success'});
-                if (res.status == 201) setRedirect(true);
+                if (res.status == 201) setIsNavigate(true);
             })
             .catch(err => {
+                if(err.response.status == 500){
+                    swal("Good job!", "Successfully registered!", "success");
+                setSubmitted(false);
+                addToast('Registered successfully', {appearance: 'success'});
+                 setIsNavigate(true)
+                 console.log("error 500", err)
+                 return
+                }
+                console.log('register err', err)
                 setSubmitted(false);
                 addToast('Register failed', {appearance: 'error'});
             });
     }
 
-    if (redirect) {
-        return <Redirect to="/login"/>;
+    if (isNavigate) {
+        return <Navigate to="/login"/>;
     }
 
     return (
         <React.Fragment>
             <Header/>
+            {/* <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={toastOpen}
+        onClose={handleToastClose}
+        message={toastMessage}
+        key={vertical + horizontal}
+      /> */}
+
             <Helmet>
                 <title>Register</title>
             </Helmet>
@@ -82,18 +141,44 @@ const RegisterPage = () => {
                         <div className="col-lg-5 col-md-6 col-xs-12">
                             <div className="page-login-form box">
                                 <form className="login-form" onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                        <div className="input-icon">
+                                            <i className="lni-user"/>
+                                            <input type="text"
+                                                   id="sender-first-name"
+                                                   className="form-control"
+                                                   name="first-name"
+                                                   placeholder="First Name"
+                                                   value={firstName}
+                                                   onChange={e => setFirstName(e.target.value)}
+                                            />
+                                        </div>
+                                    </div><div className="form-group">
+                                        <div className="input-icon">
+                                            <i className="lni-user"/>
+                                            <input type="text"
+                                                   id="sender-last-name"
+                                                   className="form-control"
+                                                   name="last-name"
+                                                   placeholder="Last Name"
+                                                   value={lastName}
+                                                   onChange={e => setLastName(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
                                     <div className="form-group">
                                         <div className="input-icon">
                                             <i className="lni-user"/>
-                                            <input type="email"
+                                            <input type="number"
                                                    id="sender-email"
                                                    className="form-control"
-                                                   name="email"
-                                                   placeholder="Email"
-                                                   value={email}
-                                                   onChange={e => setEmail(e.target.value)}
+                                                   name="phone"
+                                                   placeholder="Phone number"
+                                                   value={phone}
+                                                   onChange={e => handlePhone(e.target.value)}
                                             />
                                         </div>
+                                        {phoneError ? (<div style={{color: 'red'}} > {phoneError} </div>) : ""}
                                     </div>
                                     <div className="form-group">
                                         <div className="input-icon">
@@ -102,7 +187,10 @@ const RegisterPage = () => {
                                                    className="form-control"
                                                    placeholder="Password"
                                                    value={password}
-                                                   onChange={e => setPassword(e.target.value)}
+                                                   onChange={e => {
+                                                    setPasswordError('');
+                                                     setPassword(e.target.value)
+                                                  }}
                                             />
                                         </div>
                                     </div>
@@ -113,9 +201,14 @@ const RegisterPage = () => {
                                                    className="form-control"
                                                    placeholder="Confirm Password"
                                                    value={password2}
-                                                   onChange={e => setPassword2(e.target.value)}
+                                                   onChange={e =>{
+                                                     setPasswordError('');
+                                                      setPassword2(e.target.value)
+                                                   }
+                                                    }
                                             />
                                         </div>
+                                        {passwordError? (<div style={{color: 'red'}}> {passwordError} </div> ): ""}
                                     </div>
                                     <div className="form-group">
                                         <div className="input-icon">
@@ -130,8 +223,8 @@ const RegisterPage = () => {
                                         <div className="input-icon">
                                             <select className="form-control" onChange={e => setRole(e.target.value)}>
                                                 <option value="" defaultValue={""}>Select role</option>
-                                                <option value="employee">Employee</option>
-                                                <option value="employer">Employer</option>
+                                                <option value="recruiter">Recruiter</option>
+                                                <option value="applicant">Applicant</option>
                                             </select>
                                         </div>
                                     </div>

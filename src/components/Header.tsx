@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { FC, useContext, useState } from "react";
-import { NavLink, Redirect } from 'react-router-dom';
+import { NavLink, Navigate } from 'react-router-dom';
 import Jumbotron from "./Jumbotron";
 import { AuthContext } from "../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,7 @@ const Header: FC = () => {
 
     const {t, i18n} = useTranslation();
 
-    const [redirect, setRedirect] = useState(false);
+    const [isNavigate, setIsNavigate] = useState(false);
     const authContext = useContext(AuthContext);
     const {isAuthenticated, user} = authContext.state;
 
@@ -19,15 +19,15 @@ const Header: FC = () => {
             payload: {},
         });
 
-        setRedirect(true);
+        setIsNavigate(true);
     }
 
     const getFullName = () => {
-        return `${user.first_name} ${user.last_name}`;
+        return `${user?.name?.first} ${user?.name?.last}`;
     }
 
-    if (redirect) {
-        return <Redirect to="/"/>;
+    if (isNavigate) {
+        return <Navigate to="/"/>;
     }
 
     return (
@@ -44,30 +44,30 @@ const Header: FC = () => {
                                 <span className="lni-menu"/>
                                 <span className="lni-menu"/>
                             </button>
-                            <NavLink exact className='navbar-brand' style={{fontWeight: 'bold'}} to='/'>Job portal</NavLink>
+                            <NavLink  className='navbar-brand' style={{fontWeight: 'bold'}} to='/'>Job portal</NavLink>
                         </div>
                         <div className="collapse navbar-collapse" id="main-navbar">
                             <ul className="navbar-nav mr-auto w-100 justify-content-end">
                                 <li className="nav-item">
-                                    <NavLink exact className='nav-link' activeClassName='' to='/'>Home</NavLink>
+                                    <NavLink  className='nav-link'  to='/'>Home</NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink exact className='nav-link' activeClassName='' to='/jobs'>Jobs</NavLink>
+                                    <NavLink  className='nav-link'  to='/jobs'>Jobs</NavLink>
                                 </li>
                                 {
                                     !isAuthenticated && (
                                         <React.Fragment>
                                             <li className="nav-item">
-                                                <NavLink exact className='nav-link' activeClassName='' to='/login'>Login</NavLink>
+                                                <NavLink  className='nav-link'  to='/login'>Login</NavLink>
                                             </li>
                                             <li className="nav-item">
-                                                <NavLink exact className='nav-link' activeClassName='' to='/register'>Register</NavLink>
+                                                <NavLink  className='nav-link'  to='/register'>Register</NavLink>
                                             </li>
                                         </React.Fragment>
                                     )
                                 }
                                 {
-                                    isAuthenticated && user.role === 'employee' && (
+                                    isAuthenticated && user.role === 'applicant' && (
                                         <>
                                             <li className="nav-item dropdown">
                                                 <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true"
@@ -76,7 +76,7 @@ const Header: FC = () => {
                                                 </a>
                                                 <ul className="dropdown-menu">
                                                     <li>
-                                                        <NavLink exact className="dropdown-item" activeClassName='' to='/applied-jobs'>Applied
+                                                        <NavLink  className="dropdown-item"  to='/applied-jobs'>Applied
                                                             jobs</NavLink>
                                                     </li>
                                                 </ul>
@@ -88,7 +88,7 @@ const Header: FC = () => {
                                                 </a>
                                                 <ul className="dropdown-menu">
                                                     <li>
-                                                        <NavLink exact className="dropdown-item" activeClassName='' to='/edit-profile'>Edit
+                                                        <NavLink  className="dropdown-item"  to='/edit-profile'>Edit
                                                             Profile</NavLink>
                                                     </li>
                                                     <li onClick={handleLogout} style={{cursor: 'pointer'}}>
@@ -100,7 +100,8 @@ const Header: FC = () => {
                                     )
                                 }
                                 {
-                                    isAuthenticated && user.role === "employer" && (
+                                    isAuthenticated && user.role === "recruiter" &&
+                                     (
                                         <li className="nav-item dropdown">
                                             <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true"
                                                aria-expanded="false">
@@ -108,15 +109,15 @@ const Header: FC = () => {
                                             </a>
                                             <ul className="dropdown-menu">
                                                 <li>
-                                                    <NavLink exact className="dropdown-item" activeClassName=''
+                                                    <NavLink  className="dropdown-item" 
                                                              to='/employer/dashboard/'>Dashboard</NavLink>
                                                 </li>
                                                 <li>
-                                                    <NavLink exact className="dropdown-item" activeClassName=''
+                                                    <NavLink  className="dropdown-item" 
                                                              to='/employer/applicants/'>Applicants</NavLink>
                                                 </li>
                                                 <li>
-                                                    <NavLink exact className="dropdown-item" activeClassName='' to='/post-job'>Post a
+                                                    <NavLink  className="dropdown-item"  to='/employer/post-job'>Post a
                                                         Job</NavLink>
                                                 </li>
                                             </ul>
@@ -131,10 +132,12 @@ const Header: FC = () => {
                                     )
                                 }
                                 <li className="button-group">
-                                    <NavLink className="button btn btn-common" activeClassName='' to='/post-job/'>Post a Job</NavLink>
+                                    <NavLink className="button btn btn-common"
+                                    //  
+                                      to='/employer/post-job/'>Post a Job</NavLink>
                                 </li>
 
-                                <li className="nav-item dropdown">
+                                {/* <li className="nav-item dropdown">
                                     <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true"
                                        aria-expanded="false">
                                         Language
@@ -147,7 +150,7 @@ const Header: FC = () => {
                                             <a className="dropdown-item" onClick={() => i18n.changeLanguage("bn")}>Bengali</a>
                                         </li>
                                     </ul>
-                                </li>
+                                </li> */}
                             </ul>
                         </div>
                     </div>

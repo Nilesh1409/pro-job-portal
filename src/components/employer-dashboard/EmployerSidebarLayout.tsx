@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { FC, useContext, useState } from "react";
-import {NavLink, Redirect, useHistory} from "react-router-dom";
+import {NavLink, Navigate, useNavigate, useLocation} from "react-router-dom";
 import {AuthContext} from "../../contexts/AuthContext";
 
 interface Props {
@@ -10,11 +10,12 @@ interface Props {
 
 const EmployerSidebarLayout: FC<Props> = ({children, title = 'Dashboard'}) => {
 
-    const history = useHistory();
+    const navigate = useNavigate();
+    let location = useLocation()
 
     const authContext = useContext(AuthContext);
     const {isAuthenticated, user} = authContext.state;
-    const [redirect, setRedirect] = useState(false);
+    const [isNavigate, setIsNavigate] = useState(false);
 
     const handleLogout = () => {
         authContext.authDispatch({
@@ -22,15 +23,15 @@ const EmployerSidebarLayout: FC<Props> = ({children, title = 'Dashboard'}) => {
             payload: {},
         });
 
-        setRedirect(true);
+        setIsNavigate(true);
     }
 
     const getActiveClass = (url: string) => {
-        return url === history.location.pathname ? 'active' : '';
+        return url === location.pathname ? 'active' : '';
     }
 
-    if (redirect) {
-        return <Redirect to="/"/>;
+    if (isNavigate) {
+        return <Navigate to="/"/>;
     }
 
     return (
@@ -56,11 +57,11 @@ const EmployerSidebarLayout: FC<Props> = ({children, title = 'Dashboard'}) => {
                                 <h4>Manage Account</h4>
                                 <ul className="list-item">
                                     <li>
-                                        <NavLink exact className={getActiveClass('/employer/dashboard/')} activeClassName='active'
+                                        <NavLink  className={getActiveClass('/employer/dashboard/')} 
                                                  to='/employer/dashboard/'>Dashboard</NavLink>
                                     </li>
                                     <li>
-                                        <NavLink exact className={getActiveClass('/employer/applicants/')}
+                                        <NavLink className={getActiveClass('/employer/applicants/')}
                                                  to='/employer/applicants/'>Applicants</NavLink>
                                     </li>
                                     <li><a href="#!">Change Password</a></li>

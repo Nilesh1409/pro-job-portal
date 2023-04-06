@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { FC, useContext, useEffect } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
 
@@ -15,19 +15,23 @@ const EmployeePrivateRoute: FC<any> = ({ component: Component, ...rest }) => {
     //     };
     //     fetchData();
     // }, []);
+    interface Props {
+        component: React.ComponentType<any>;
+        [key: string]: any;
+    }
 
     return (
         <Route
             {...rest}
             render={
-                props => {
+                (props: any) => {
                     if (authContext.state.isLoading) {
                         return <h2>Loading...</h2>
                     } else if (!authContext.state.isAuthenticated) {
-                        return <Redirect to="/login" />
+                        return <Navigate to="/login" />
                     }
                     else if (!authContext.state.user || authContext.state.user.role !== 'employee') {
-                        return <Redirect to="/" />
+                        return <Navigate to="/" />
                     }
                     else {
                         return <Component {...props} />;

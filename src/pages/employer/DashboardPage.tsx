@@ -6,7 +6,7 @@ import AxiosConfig from "../../AxiosConfig";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { IJob } from "../../interfaces";
-import Loader from "react-loader-spinner";
+import {Rings} from "react-loader-spinner";
 
 const DashboardPage = () => {
     const [jobs, setJobs] = useState<IJob[]>([]);
@@ -63,8 +63,8 @@ const DashboardPage = () => {
                         <div className="col-lg-9 col-md-9 col-xs-12">
                             <div className="row">
                                 <div className="col-md-6 mx-auto">
-                                    <Loader
-                                        type="Grid"
+                                    <Rings
+                                        // type="Grid"
                                         color="#00BFFF"
                                         // style={{textAlign: 'center'}}
                                         height={100}

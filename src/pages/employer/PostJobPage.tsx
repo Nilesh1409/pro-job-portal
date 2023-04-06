@@ -7,9 +7,9 @@ import makeAnimated from "react-select/animated";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/light.css";
 import { AuthContext } from "../../contexts/AuthContext";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { ITag } from "../../interfaces";
-import Loader from "react-loader-spinner";
+import {Rings} from "react-loader-spinner";
 import { useToasts } from "react-toast-notifications";
 
 interface ICustomTag {
@@ -18,11 +18,13 @@ interface ICustomTag {
 }
 
 const PostJobPage: FC = () => {
-    const [tags, setTags] = useState<ICustomTag[]>([]);
+    const [tags, setTags] = useState([{ value: 'communication', label: 'communication' },
+    { value: 'communication', label: 'communication' },
+    { value: 'communication', label: 'communication' }]);
     const [types, setTypes] = useState([
-        {"value": 1, "label": "Full Time"},
-        {"value": 2, "label": "Part Time"},
-        {"value": 3, "label": "Internship"},
+        {"value": "Full Time", "label": "Full Time"},
+        {"value": "Part Time", "label": "Part Time"},
+        {"value": "Internship", "label": "Internship"},
     ]);
     const [categories, setCategories] = useState([
         {"value": "web-design", "label": "Web design"},
@@ -48,18 +50,19 @@ const PostJobPage: FC = () => {
     const authContext = useContext(AuthContext);
     const {token, isAuthenticated} = authContext.state;
     const {addToast} = useToasts();
-    const [redirect, setRedirect] = useState<boolean>(false);
+    const [isNavigate, setIsNavigate] = useState<boolean>(false);
 
     useEffect(() => {
-        setLoading(true);
-        AxiosConfig.get('tags/')
-            .then(res => {
+        // setLoading(true);
+        // AxiosConfig.get('tags/')
+        //     .then(res => {
 
-                let my_tags: ICustomTag[] = [];
-                res.data.forEach((tag: ITag) => my_tags.push({"value": tag.id, "label": tag.name}));
-                setTags(my_tags);
-                setLoading(false);
-            }).catch(err => addToast(err, {appearance: 'error'}))
+        //         let my_tags: ICustomTag[] = [];
+        //         res.data.forEach((tag: ITag) => my_tags.push({"value": tag.id, "label": tag.name}));
+        //         console.log('tag',my_tags)
+        //         setTags(my_tags);
+        //         setLoading(false);
+        //     }).catch(err => addToast(err, {appearance: 'error'}))
     }, []);
 
     const animatedComponents = makeAnimated();
@@ -68,28 +71,34 @@ const PostJobPage: FC = () => {
         e.preventDefault();
 
         const new_job_data = {
-            'title': title,
-            'description': description,
-            'tags': job_tags,
-            'salary': salary,
-            'location': location,
-            'type': type,
-            'category': category,
-            'last_date': last_date,
-            'company_name': company_name,
+            'title': title, 
+            'description': description, 
+            'tags': job_tags, 
+            'salary': salary, 
+            // 'location': location, 
+            'type': type, 
+            'category': category, 
+            // 'last_date': last_date,
+            'company': company_name, 
             'company_description': company_description,
-            'website': website,
+            // 'website': website,
         };
+
+        console.log("new_job_data",new_job_data)
 
         const config = {
             headers: {Authorization: `Bearer ${token}`}
         };
 
-        AxiosConfig.post(`employer/jobs/create/`, new_job_data, config)
+        AxiosConfig.post(`/jobs/`, new_job_data, config)
             .then(res => {
+                console.log("post job res",res)
                 addToast('Job were successfully posted', {appearance: 'success'});
-                setRedirect(true);
-            }).catch(err => addToast('Something went wrong!', {appearance: 'error'}));
+                setIsNavigate(true);
+            }).catch(err => {
+                console.log("post job err",err)
+                addToast('Something went wrong!', {appearance: 'error'})
+            });
     }
 
     const handleSkillsChange = (selectedOptions: any) => {
@@ -97,12 +106,15 @@ const PostJobPage: FC = () => {
         setJobTags([...my_tags]);
     }
 
-    if (redirect) {
-        return <Redirect to="/"/>;
+    if (isNavigate) {
+        return <Navigate to="/"/>;
     }
+
+    console.log('post job page')
 
     return (
         <BaseLayout title={'Post new job'}>
+            {/* <h1>post job </h1> */}
 
             <div className="page-header">
                 <div className="container">
@@ -122,8 +134,8 @@ const PostJobPage: FC = () => {
                         <div className="col-lg-9 col-md-12 col-xs-12">
                             <div className="post-job box">
                                 <div className="text-center justify-content-center align-self-center">
-                                    <Loader
-                                        type="Grid"
+                                    <Rings
+                                        // type="Grid"
                                         color="#00BFFF"
                                         height={100}
                                         width={100}
@@ -189,10 +201,10 @@ const PostJobPage: FC = () => {
                                                         className="form-control"
                                                         onChange={event => setLocation(event.target.value)}
                                                         required
-                                                        placeholder="e.g.London"/>
+                                                        placeholder="e.g. Mumbai"/>
                                                 </div>
                                                 <div className="row">
-                                                    <div className="col-md-6">
+                                                    {/* <div className="col-md-6">
                                                         <div className="form-group">
                                                             <label className="control-label">Company</label>
                                                             <input
@@ -202,7 +214,7 @@ const PostJobPage: FC = () => {
                                                                 required
                                                                 placeholder="Write company name"/>
                                                         </div>
-                                                    </div>
+                                                    </div> */}
                                                     <div className="col-md-6">
                                                         <div className="form-group">
                                                             <label className="control-label">Type</label>
@@ -217,9 +229,8 @@ const PostJobPage: FC = () => {
                                                                 />
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div className="form-group">
+                                                        </div>
+                                                        <div className="form-group col-md-6">
                                                     <label className="control-label">Category</label>
                                                     <div className="search-category-container">
                                                         <Select
@@ -232,8 +243,10 @@ const PostJobPage: FC = () => {
                                                         />
                                                     </div>
                                                 </div>
+                                                </div>
+                                                
                                                 <div className="row">
-                                                    <div className="col-md-6">
+                                                    {/* <div className="col-md-6">
                                                         <div className="form-group">
                                                             <label className="control-label">Apply URL <span>(users will apply on your website)</span></label>
                                                             <input
@@ -243,7 +256,7 @@ const PostJobPage: FC = () => {
                                                                 required
                                                                 placeholder="Apply URL"/>
                                                         </div>
-                                                    </div>
+                                                    </div> */}
                                                     <div className="col-md-6">
                                                         <label className="control-label">Validity of the post</label>
                                                         <Flatpickr
