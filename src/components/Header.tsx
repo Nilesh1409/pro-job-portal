@@ -4,6 +4,7 @@ import { NavLink, Navigate } from "react-router-dom";
 import Jumbotron from "./Jumbotron";
 import { AuthContext } from "../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
+import "./Header.css";
 
 const Header: FC = () => {
   const { t, i18n } = useTranslation();
@@ -31,7 +32,7 @@ const Header: FC = () => {
 
   return (
     <header id="home" className="hero-area">
-      <nav className="navbar navbar-expand-lg fixed-top scrolling-navbar">
+      <nav className="navbar navbar-expand-lg fixed-top navbar-light bg-light scrolling-navbar">
         <div className="container">
           <div className="theme-header clearfix">
             <div className="navbar-header">
@@ -45,9 +46,9 @@ const Header: FC = () => {
                 aria-label="Toggle navigation"
               >
                 <span className="navbar-toggler-icon" />
+                {/* <span className="lni-menu" />
                 <span className="lni-menu" />
-                <span className="lni-menu" />
-                <span className="lni-menu" />
+                <span className="lni-menu" /> */}
               </button>
               <NavLink
                 className="navbar-brand"
@@ -61,7 +62,7 @@ const Header: FC = () => {
               </NavLink>
             </div>
             <div className="collapse navbar-collapse" id="main-navbar">
-              <ul className="navbar-nav mr-auto w-100 justify-content-end">
+              <ul className="navbar-nav mr-auto w-100 justify-content-end margin-auto-to-all-child">
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/">
                     Home
@@ -142,7 +143,7 @@ const Header: FC = () => {
                       aria-haspopup="true"
                       aria-expanded="false"
                     >
-                      Employers
+                      Recruiters
                     </a>
                     <ul className="dropdown-menu">
                       <li>
@@ -172,7 +173,7 @@ const Header: FC = () => {
                     </ul>
                   </li>
                 )}
-                {isAuthenticated && user.role === "employer" && (
+                {isAuthenticated && user.role === "recruiter" && (
                   <li
                     className="nav-item"
                     onClick={handleLogout}
@@ -185,7 +186,11 @@ const Header: FC = () => {
                   <NavLink
                     className="button btn btn-common"
                     //
-                    to="/employer/post-job/"
+                    to={
+                      isAuthenticated && user.role === "recruiter"
+                        ? "/employer/post-job/"
+                        : "/login"
+                    }
                   >
                     Post a Job
                   </NavLink>

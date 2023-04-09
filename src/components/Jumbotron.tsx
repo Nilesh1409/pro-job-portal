@@ -1,10 +1,13 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import "../App.css";
+import { AuthContext } from "../contexts/AuthContext";
+// import {} from "rea"
 
 const Jumbotron: FC = () => {
   const { t } = useTranslation();
+  let authContext = useContext(AuthContext);
 
   const allCityNames: any = [
     "Mumbai",
@@ -176,14 +179,18 @@ const Jumbotron: FC = () => {
                   </div>
                 </div>
               </form> */}
-              <NavLink
-                style={{ borderRadius: "25px" }}
-                className="search-job button btn btn-common"
-                //
-                to="/jobs"
-              >
-                Find Job
-              </NavLink>
+              {authContext?.state?.user?.role === "recruiter" ? (
+                ""
+              ) : (
+                <NavLink
+                  style={{ borderRadius: "25px" }}
+                  className="search-job button btn btn-common"
+                  //
+                  to={authContext?.state?.isAuthenticated ? "/jobs" : "/login"}
+                >
+                  Find Job
+                </NavLink>
+              )}
             </div>
           </div>
         </div>

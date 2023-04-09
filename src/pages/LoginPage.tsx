@@ -77,9 +77,16 @@ const LoginPage: FC = () => {
         }
       } catch (err: any) {
         if (err.response && err.response.status === 401) {
-          console.log(err.response);
+          addToast("Login failed", { appearance: "error", autoDismiss: true });
+        } else if (err.response && err.response.status === 404) {
+          addToast("Given mobile number is not register!", {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        } else {
           addToast("Login failed", { appearance: "error", autoDismiss: true });
         }
+
         console.log("err", err);
         setSubmitted(false);
       }
@@ -126,7 +133,11 @@ const LoginPage: FC = () => {
                         name="number"
                         placeholder="Phone number"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => {
+                          e.target.value.length <= 10
+                            ? setPhone(e.target.value)
+                            : "";
+                        }}
                       />
                     </div>
                   </div>
@@ -174,19 +185,21 @@ const LoginPage: FC = () => {
                 </form>
                 <ul className="form-links">
                   <li className="text-center">
-                    <NavLink to="/register">Don't have an account?</NavLink>
+                    <button
+                      type="button"
+                      style={{ border: "1px solid black" }}
+                      className="btn btn-outline-primary"
+                    >
+                      <NavLink to="/register">Don't have an account?</NavLink>
+                    </button>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
           <div className="row justify-content-center my-2">
-            <div className="col-md-4">
-              <FacebookSocialAuth />
-            </div>
-            <div className="col-md-4">
-              <GoogleSocialAuth />
-            </div>
+            <div className="col-md-4">{/* <FacebookSocialAuth /> */}</div>
+            <div className="col-md-4">{/* <GoogleSocialAuth /> */}</div>
           </div>
         </div>
       </section>
