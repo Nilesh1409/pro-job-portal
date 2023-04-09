@@ -77,7 +77,10 @@ const LoginPage: FC = () => {
         }
       } catch (err: any) {
         if (err.response && err.response.status === 401) {
-          addToast("Login failed", { appearance: "error", autoDismiss: true });
+          addToast(err.response.data.message, {
+            appearance: "error",
+            autoDismiss: true,
+          });
         } else if (err.response && err.response.status === 404) {
           addToast("Given mobile number is not register!", {
             appearance: "error",

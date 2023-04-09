@@ -56,7 +56,7 @@ const Header: FC = () => {
                 to="/"
               >
                 <img
-                  style={{ width: "100px", height: "60px" }}
+                  style={{ width: "45px", height: "57px" }}
                   src={require("../assets/img/pro1.jpeg")}
                 />
               </NavLink>
