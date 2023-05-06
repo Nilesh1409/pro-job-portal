@@ -30,22 +30,34 @@ const Footer: FC = () => {
               <div className="widget">
                 <ul className="mt-3 footer-social">
                   <li>
-                    <a className="facebook" href="#">
+                    <a
+                      className="facebook"
+                      target="_blank"
+                      href="https://www.facebook.com/proconsultantmh"
+                    >
                       <i className="lni-facebook-filled" />
                     </a>
                   </li>
                   <li>
-                    <a className="twitter" href="#">
+                    <a className="twitter" target="_blank" href="#">
                       <i className="lni-twitter-filled" />
                     </a>
                   </li>
                   <li>
-                    <a className="linkedin" href="#">
+                    <a
+                      className="linkedin"
+                      target="_blank"
+                      href="https://www.linkedin.com/company/m-s-pro-consultant/"
+                    >
                       <i className="lni-linkedin-fill" />
                     </a>
                   </li>
                   <li>
-                    <a className="google-plus" href="#">
+                    <a
+                      className="google-plus"
+                      target="_blank"
+                      href="mailto:proconsultant.hr@gmail.com"
+                    >
                       <i className="lni-google-plus" />
                     </a>
                   </li>
