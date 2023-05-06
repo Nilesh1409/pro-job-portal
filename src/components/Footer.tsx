@@ -35,7 +35,7 @@ const Footer: FC = () => {
                       target="_blank"
                       href="https://www.facebook.com/proconsultantmh"
                     >
-                      <i className="lni-facebook-filled" />
+                      <i className="lni-facebook-filled " />
                     </a>
                   </li>
                   <li>
